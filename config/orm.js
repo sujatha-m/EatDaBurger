@@ -24,12 +24,12 @@ function objToSql(ob) {
     var value = ob[key];
     // check to skip hidden properties
     if (Object.hasOwnProperty.call(ob, key)) {
-      // if string with spaces, add quotations (Lana Del Grey => 'Lana Del Grey')
+      // if string with spaces, add quotations (cheese burger => 'cheese burger')
       if (typeof value === "string" && value.indexOf(" ") >= 0) {
         value = "'" + value + "'";
       }
-      // e.g. {name: 'Lana Del Grey'} => ["name='Lana Del Grey'"]
-      // e.g. {sleepy: true} => ["sleepy=true"]
+      // e.g. {name: 'cheese burger'} => ["name='cheese burger'"]
+      // e.g. {devoured: true} => ["devoured=true"]
       arr.push(key + "=" + value);
     }
   }
@@ -39,17 +39,17 @@ function objToSql(ob) {
 }
 
 const orm = {
-    selectAll: function(tableInput, cb) {
+    selectAll: async function(tableInput, cb) {
       var queryString = "SELECT * FROM " + tableInput + ";";
-      connection.query(queryString, function(err, result) {
-        if (err) {
-          throw err;
-        }
+      try {
+        const[result] = await connection.query(queryString);
         cb(result);
-      });
+      } catch(err) {
+        console.log(err);
+      }
     },
 
-    insertOne: function(table, cols, vals, cb) {
+    insertOne: async function(table, cols, vals, cb) {
       var queryString = "INSERT INTO " + table;
   
       queryString += " (";
@@ -60,17 +60,15 @@ const orm = {
       queryString += ") ";
   
       console.log(queryString);
-  
-      connection.query(queryString, vals, function(err, result) {
-        if (err) {
-          throw err;
-        }
-  
+      try {
+        const[result] = await connection.query(queryString, vals);
         cb(result);
-      });
+      } catch(err) {
+        console.log(err);
+      }
     },
 
-    updateOne: function(table, objColVals, condition, cb) {
+    updateOne: async function(table, objColVals, condition, cb) {
       var queryString = "UPDATE " + table;
   
       queryString += " SET ";
@@ -79,13 +77,12 @@ const orm = {
       queryString += condition;
   
       console.log(queryString);
-      connection.query(queryString, function(err, result) {
-        if (err) {
-          throw err;
-        }
-  
+      try {
+        const[result] = await connection.query(queryString);
         cb(result);
-      });
+      } catch(err) {
+        console.log(err);
+      }
     }
 }  
 
