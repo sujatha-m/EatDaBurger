@@ -9,6 +9,7 @@
                 </div>
                 <div class="row">
                     {{#each burger_data}}
+                    {{!-- when burger data is available and is not devoured render the burger entry with devour it buttons--}}
                     {{#unless this.devoured}}
                     <div class="card-body">
 
